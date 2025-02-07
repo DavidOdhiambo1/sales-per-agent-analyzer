@@ -15,7 +15,11 @@ class Sale:
         self.agent_id = agent_id
 
     def __repr__(self):
-        return (f"<Sale {self.id}: {self.amount}, Date: {self.date}, Agent: {self.agent_id} " )
+        if isinstance(self.date, str):
+            return f"<Sale {self.id}: {self.amount}, Date: {self.date}, Agent: {self.agent_id}>"
+        
+        # If the date is a datetime object, format it properly
+        return f"<Sale {self.id}: {self.amount}, Date: {self.date.strftime('%Y-%m-%d')}, Agent: {self.agent_id}>"
 
     @property
     def amount(self):

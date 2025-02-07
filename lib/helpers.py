@@ -137,11 +137,20 @@ def delete_sale():
 
 
 
-def list_agents_sales():
+def total_agents_sales():
     id_ = input("Enter the agent's id: ")
+    
     if agent := Agent.find_by_id(id_):
-        sales = agent.sales()
-        for sale in sales:
-            print(sale)
+        total_sales = agent.agent_total_sales()
+        print(f'Total sales for agent {id_} - {agent.name}: {total_sales}')
+                
     else:
         print(f'Agent {id_} not found')
+
+def total_sales_per_agent_report():
+    return Agent.display_total_sales_report()
+
+def best_sales_agent():
+    best_sales_agent = Agent.get_agent_with_highest_sales()
+    agent_id, agent_name, total_sales = best_sales_agent
+    print(f"Best sales agent is {agent_name} agent_id {agent_id} with sales of {total_sales}")

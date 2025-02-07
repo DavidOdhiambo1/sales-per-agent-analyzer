@@ -11,7 +11,7 @@ def seed_database():
     # Create seed data
     peter = Agent.create("Peter", "M")
     chloe = Agent.create("Chloe", "F")
-    print(peter.id, chloe.id)
+    
     Sale.create(500, "2025-01-01", peter.id)
     Sale.create(1200, "2025-02-01", peter.id)
     Sale.create(5000, "2025-02-01", peter.id)

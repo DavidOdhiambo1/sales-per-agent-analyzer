@@ -11,7 +11,9 @@ from helpers import (
     create_new_sale,
     update_sale,
     delete_sale,
-    list_agents_sales,
+    total_agents_sales,
+    total_sales_per_agent_report,
+    best_sales_agent
     
 )
 
@@ -45,7 +47,11 @@ def main():
         elif choice == "11":
             delete_sale()
         elif choice == "12":
-            list_agents_sales()
+            total_agents_sales()
+        elif choice == "13":
+            total_sales_per_agent_report()
+        elif choice == "14":
+            best_sales_agent()
         else:
             print("Invalid choice")
 
@@ -64,7 +70,9 @@ def menu():
     print("9. Create new sale")
     print("10: Update sale")
     print("11: Delete sale")
-    print("12: List all sales for an agent")
+    print("12: Total sales for an agent")
+    print("13: Total sales per agent report")
+    print("14: Best sales agent")
     
 
 

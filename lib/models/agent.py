@@ -160,8 +160,9 @@ class Agent:
         row = CURSOR.execute(sql, (name,)).fetchone()
         return cls.instance_from_db(row) if row else None
 
-    def sales(self):
-        """Return list of sales associated with current agent"""
+  
+    def agent_total_sales(self):
+        """Return total sales for a particular agent"""
         from models.sale import Sale
         sql = """
             SELECT * FROM sales
@@ -170,6 +171,66 @@ class Agent:
         CURSOR.execute(sql, (self.id,),)
 
         rows = CURSOR.fetchall()
-        return [
-            Sale.instance_from_db(row) for row in rows
-        ]
+        sales_list = [Sale.instance_from_db(row) for row in rows]
+        total_sales = sum(sale.amount for sale in sales_list)
+        return total_sales
+    
+    
+    def display_total_sales_report():
+        """Fetch and display total sales per agent, including agent names."""
+        sql = """
+            SELECT a.id, a.name, SUM(s.amount) as total_sales
+            FROM sales s
+            JOIN agents a ON s.agent_id = a.id
+            GROUP BY a.id
+        """
+        try:
+            CURSOR.execute(sql)
+            rows = CURSOR.fetchall()
+
+            if not rows:
+                print("No sales data found.")
+                return
+
+            print("Total Sales per Agent Report:")
+            print(f"{'Agent ID':<10} {'Agent Name':<20} {'Total Sales'}")
+            print("-" * 50)
+
+            # Printing the sales total for each agent 
+            for row in rows:
+                agent_id, agent_name, total_sales = row
+                print(f"{agent_id:<10} {agent_name:<20} {total_sales}")
+
+        except Exception as e:
+            print(f"Error generating total sales per agent report: {e}")
+    @classmethod
+    def get_agent_with_highest_sales(cls):
+        """Fetch the agent with the highest total sales."""
+        sql = """
+            SELECT a.id, a.name, SUM(s.amount) as total_sales
+            FROM sales s
+            JOIN agents a ON s.agent_id = a.id
+            GROUP BY a.id
+            ORDER BY total_sales DESC
+            LIMIT 1
+        """
+        try:
+            CURSOR.execute(sql)
+            row = CURSOR.fetchone()
+
+            if not row:
+                print("No sales data found.")
+                return None
+
+            agent_id, agent_name, total_sales = row
+            # print(f"Agent with the highest sales is: {agent_name} with total sales of {total_sales}")
+            # print(f"Agent ID: {agent_id}")
+            # print(f"Agent Name: {agent_name}")
+            # print(f"Total Sales: {total_sales}")
+
+            return (agent_id, agent_name, total_sales)
+
+        except Exception as e:
+            print(f"Error fetching the agent with the highest sales: {e}")
+            return None
+    
