@@ -11,11 +11,11 @@ class Sale:
     def __init__(self, amount, date, agent_id, id=None):
         self.id = id
         self.amount = amount
-        self.date = self.validate_date(date)
+        self.date = self.validate_date(date if date else datetime.today().strftime("%Y-%m-%d"))
         self.agent_id = agent_id
 
     def __repr__(self):
-        return (f"<Sale {self.id}: {self.amount}, Agent: {self.agent_id} " )
+        return (f"<Sale {self.id}: {self.amount}, Date: {self.date}, Agent: {self.agent_id} " )
 
     @property
     def amount(self):
@@ -33,7 +33,7 @@ class Sale:
         return self._agent_id
 
     @agent_id.setter
-    def department_id(self, agent_id):
+    def agent_id(self, agent_id):
         if type(agent_id) is int and Agent.find_by_id(agent_id):
             self._agent_id = agent_id
         else:
@@ -44,7 +44,7 @@ class Sale:
         # Check if date is a string and try to parse it into a datetime object
         if isinstance(date, str):
             try:
-                return datetime.strptime(date, "%Y-%m-%d")  # YYYY-MM-DD format
+                return datetime.strptime(date.split()[0], "%Y-%m-%d")  # YYYY-MM-DD format
             except ValueError:
                 raise ValueError("Date must be in 'YYYY-MM-DD' format")
         elif isinstance(date, datetime):
@@ -58,7 +58,7 @@ class Sale:
         sql = """
             CREATE TABLE IF NOT EXISTS sales (
             id INTEGER PRIMARY KEY,
-            count INTEGER,
+            amount INTEGER,
             date TEXT,
             agent_id INTEGER,
             FOREIGN KEY (agent_id) REFERENCES agents(id))
@@ -81,7 +81,7 @@ class Sale:
         Save the object in local dictionary using table row's PK as dictionary key"""
         sql = """
                 INSERT INTO sales (amount, date, agent_id)
-                VALUES (?, ?)
+                VALUES (?, ?, ?)
         """
 
         CURSOR.execute(sql, (self.amount, self.date, self.agent_id))

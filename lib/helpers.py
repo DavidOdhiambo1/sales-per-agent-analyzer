@@ -76,12 +76,25 @@ def find_sale_by_id():
 
 
 def create_new_sale():
-    amount = input("Enter the sale's amount: ")
-    date = input("Enter the sale's date: ")
-    agent_id = input("Enter the sale's agent id: ")
     try:
+        amount = input("Enter the sale's amount: ")
+        date = input("Enter the sale's date-'YYYY-MM-DD': ")
+        agent_id = input("Enter the sale's agent id: ")
+        # convert amount and agent_id to integer since input() returns string
+        if not amount:
+            raise ValueError("Amount cannot be empty.")
+        try:
+            amount = int(amount)
+            if amount <= 0:
+                raise ValueError("Amount must be a positive integer")
+        except ValueError:
+            raise ValueError("Amount must be a valid positive integer (e.g., 500).")
+        agent_id = int(agent_id)
+        
         sale = Sale.create(amount, date, agent_id)
         print(f'Success: {sale}')
+    except ValueError as e:
+        print(f"Error: {e}")
     except Exception as exc:
         print("Error creating sale: ", exc)
 
@@ -91,10 +104,19 @@ def update_sale():
     if sale := Sale.find_by_id(id_):
         try:
             amount = input("Enter the sale's new amount: ")
+            if not amount:
+                raise ValueError("Amount cannot be empty.")
+            try:
+                amount = int(amount)
+                if amount <= 0:
+                    raise ValueError("Amount must be a positive integer")
+            except ValueError:
+                raise ValueError("Amount must be a valid positive integer (e.g., 500).")
             sale.amount = amount
-            date = input("Enter the sale's new date: ")
+            date = input("Enter the sale's new date'YYYY-MM-DD': ")
             sale.date = date
             agent_id = input("Enter the sale's new agent id: ")
+            agent_id = int(agent_id)
             sale.agent_id = agent_id
 
             sale.update()
